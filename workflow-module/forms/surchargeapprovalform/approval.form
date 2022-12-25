@@ -1,0 +1,72 @@
+{
+    "id": "approval",
+    "schemaVersion": "1.1.0",
+    "name": "approval",
+    "revision": "1.0",
+    "type": "task",
+    "readOnly": true,
+    "content": [
+        {
+            "id": "general_info",
+            "type": "section",
+            "title": "General Info",
+            "content": [
+                {
+                    "id": "file_uploaded_by",
+                    "type": "string",
+                    "label": "File Uploaded By",
+                    "readOnly": false,
+                    "value": "${context.fileuploadedby}",
+                    "constraints": {
+                        "required": false
+                    }
+                }
+            ]
+        },
+        {
+            "id": "file_contents",
+            "type": "section",
+            "title": "File Contents",
+            "content": [
+                {
+                    "id": "contents",
+                    "type": "collection",
+                    "title": "Contents",
+                    "addEnabled": false,
+                    "deleteEnabled": false,
+                    "value": "${context.filecontent}",
+                    "content": [
+                        {
+                            "id": "po",
+                            "type": "string",
+                            "label": "PO",
+                            "readOnly": false,
+                            "value": "${item.PO}",
+                            "control": {
+                                "type": "TextArea",
+                                "properties": {
+                                    "height": "small"
+                                }
+                            },
+                            "constraints": {
+                                "required": false
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "decisions": [
+        {
+            "id": "approve",
+            "text": "Approve",
+            "decisionType": "positive"
+        },
+        {
+            "id": "reject",
+            "text": "Reject",
+            "decisionType": "negative"
+        }
+    ]
+}

@@ -1,0 +1,108 @@
+_schema-version: "3.2"
+ID: surchargeapproval
+version: 0.0.1
+modules:
+- name: workflow-module
+  type: com.sap.application.content
+  path: workflow-module
+  requires:
+  - name: sap_processautomation
+    parameters:
+      content-target: true
+      service-key:
+        config:
+          deployUsageScenario: workflow
+        name: spa-workflow-service-key
+- name: surchargeapproval-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: surchargeapproval-destination-service
+    parameters:
+      content-target: true
+  - name: surchargeapproval_html_repo_host
+    parameters:
+      service-key:
+        name: surchargeapproval_html_repo_host-key
+  - name: uaa_surchargeapproval
+    parameters:
+      service-key:
+        name: uaa_surchargeapproval-key
+  parameters:
+    content:
+      subaccount:
+        destinations:
+        - Name: surcharge_surchargeapproval_html_repo_host
+          ServiceInstanceName: surchargeapproval-html5-app-host-service
+          ServiceKeyName: surchargeapproval_html_repo_host-key
+          sap.cloud.service: surcharge
+        - Authentication: OAuth2UserTokenExchange
+          Name: surcharge_uaa_surchargeapproval
+          ServiceInstanceName: surchargeapproval-xsuaa-service
+          ServiceKeyName: uaa_surchargeapproval-key
+          sap.cloud.service: surcharge
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: surchargeapproval-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: surchargeapproval_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - comzgaurfioriworkflowuimodule.zip
+      name: comzgaurfioriworkflowuimodule
+      target-path: resources/
+- name: comzgaurfioriworkflowuimodule
+  type: html5
+  path: workflow-ui-module
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: sap_processautomation
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: workflow
+    service-plan: lite
+- name: surchargeapproval-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        subaccount:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: surchargeapproval-destination-service
+    service-plan: lite
+- name: surchargeapproval_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: surchargeapproval-html5-app-host-service
+    service-plan: app-host
+- name: uaa_surchargeapproval
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: surchargeapproval-xsuaa-service
+    service-plan: application
+parameters:
+  deploy_mode: html5-repo
