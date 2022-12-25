@@ -57,9 +57,23 @@ modules:
       - comzgaurfioriworkflowuimodule.zip
       name: comzgaurfioriworkflowuimodule
       target-path: resources/
+    - artifacts:
+      - comzgaurfiorimainui.zip
+      name: comzgaurfiorimainui
+      target-path: resources/
 - name: comzgaurfioriworkflowuimodule
   type: html5
   path: workflow-ui-module
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comzgaurfiorimainui
+  type: html5
+  path: mainui
   build-parameters:
     build-result: dist
     builder: custom
