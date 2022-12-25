@@ -10,7 +10,7 @@
                                 </OverflowToolbar>
                             </headerToolbar>
                             <content>
-                                <Table id="idProductsTable"
+                                <Table id="idResponseTable"
                                        inset="false"
                                        items="{
                                             path: 'context>/filecontent'
