@@ -1,4 +1,5 @@
-<mvc:View controllerName="com.zgaur.fiori.workflowuimodule.controller.Main" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" displayBlock="true" xmlns="sap.m">
+<mvc:View controllerName="com.zgaur.fiori.workflowuimodule.controller.Main" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" displayBlock="true" xmlns="sap.m"
+          xmlns:t="sap.ui.table">
     <App id="app">
         <pages>
             <Page id="idPage" showHeader="false" showFooter="false">
@@ -7,40 +8,89 @@
                             <headerToolbar>
                                 <OverflowToolbar>
                                     <Title text="PO Details"/>
+                                    <ObjectStatus title="File Uploaded By" text="{context>fileuploadedby}"/>
+                                    
                                 </OverflowToolbar>
                             </headerToolbar>
                             <content>
-                                <Table id="idResponseTable"
-                                       inset="false"
-                                       items="{
+                                <t:Table id="idResponseTable"
+                                       fixedColumnCount='1'
+                                       rows="{
                                             path: 'context>/filecontent'
                                         }">
                                 
-                                    <columns>
-                                        <Column
+                                    <t:columns>
+                                        <t:Column
                                             width="12em">
-                                            <Text text="PO" />
-                                        </Column>
-                                        <Column
-                                            minScreenWidth="Tablet"
-                                            demandPopin="true">
-                                            <Text text="Action" />
-                                        </Column>                                        
-                                    </columns>
-                                    <items>
-                                        <ColumnListItem vAlign="Middle">
-                                            <cells>
-                                                <Text
-                                                    text="{context>PO}" />
-                                                <ComboBox selectedKey="{context>ActionPerformed}" editable="{path:'context>ActionPerformed', formatter: '.EditableAction'}">
-                                                    <core:Item key="Approved" text="Approve" />
-                                                    <core:Item key="Rejected" text="Reject" />
-                                                    <core:Item key="na" text="" />
-                                                </ComboBox>
-                                            </cells>
-                                        </ColumnListItem>
-                                    </items>
-                                </Table>
+                                            <Label text="Action" />
+                                            <t:template>
+                                                <RadioButtonGroup id="rbg3" columns="2" valueState="Success" 
+                                                            selectedIndex="{path: 'context>ActionPerformed', formatter:'.setAction'}"
+                                                            enabled= "{path: 'context>ActionPerformed', formatter:'.EditableAction'}"
+                                                            select=".selectResponse" >
+                                                    <RadioButton id="RB3-1" text="Approve" />
+                                                    <RadioButton id="RB3-2" text="Reject" />
+                                                </RadioButtonGroup>
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Purchase Order" />
+                                            <t:template>
+                                                <Text text="{context>PurchaseOrder}" />
+                                            </t:template>
+                                        </t:Column>
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Purchase Order Item" />
+                                            <t:template>
+                                                <Text text="{context>PurchaseOrderItem}" />
+                                            </t:template>
+                                        </t:Column>                                       
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Pricing Document" />
+                                            <t:template>
+                                                <Text text="{context>PricingDocument}" />
+                                            </t:template>
+                                        </t:Column>                                       
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Pricing Procedure Step" />
+                                            <t:template>
+                                                <Text text="{context>PricingProcedureStep}" />
+                                            </t:template>
+                                        </t:Column>                                       
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Condition Type" />
+                                            <t:template>
+                                                <Text text="{context>ConditionType}" />
+                                            </t:template>
+                                        </t:Column>                                       
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Condition Calculation Type" />
+                                            <t:template>
+                                                <Text text="{context>ConditionCalculationType}" />
+                                            </t:template>
+                                        </t:Column>                                       
+                                        <t:Column
+                                            width="12em">
+                                            <Label text="Condition Rate Value" />
+                                            <t:template>
+                                                <ObjectNumber
+                                                    class="sapUiSmallMarginBottom"
+                                                    number="{
+                                                            parts:[{path:'context>ConditionRateValue'},{path:'context>ConditionCurrency'}],
+                                                            type: 'sap.ui.model.type.Currency',
+                                                            formatOptions: {showMeasure: false}
+                                                        }"
+                                                    unit="{context>ConditionCurrency}" />
+                                            </t:template>
+                                        </t:Column>                                      
+                                    </t:columns>
+                                </t:Table>
                             </content>
                         </Panel>
                 </content>
