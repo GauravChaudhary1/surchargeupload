@@ -94,20 +94,47 @@ sap.ui.define(
           return startupParameters.inboxAPI;
         },
 
-        completeTask: function (approvalStatus) {
+        completeTask: async function (approvalStatus) {
           this.getModel("context").setProperty("/approved", approvalStatus);
-          this._patchTaskInstance();
+          //this._patchTaskInstance();
+          await this._patchAdditionalTaskInstance();
           this._refreshTaskList();
         },
 
-        _patchTaskInstance: function () {
+
+        _patchAdditionalTaskInstance: async function(){
+          try {
+            
+            const oTaskDetailsResp = await fetch( this._getTaskInstancesBaseURL(),{} );
+            const oTaskDetails = await oTaskDetailsResp.json();
+            const sWfId = oTaskDetails["workflowInstanceId"];
+            if(sWfId){
+
+              const oWorkflowTasks = await fetch( `${this._getWorkflowRuntimeBaseURL()}/task-instances?workflowInstanceId=${sWfId}` );
+              const oWorkflowTasksResp = await oWorkflowTasks.json();
+
+              if(Array.isArray(oWorkflowTasksResp)){
+                oWorkflowTasksResp.forEach((oObj) => {
+                  this._patchTaskInstance(oObj["id"])
+                })
+              }
+
+            }
+
+          } catch (error) {
+            
+          }  
+          
+        },
+
+        _patchTaskInstance: function (sId) {
           var data = {
             status: "COMPLETED",
             context: this.getModel("context").getData(),
           };
 
           jQuery.ajax({
-            url: this._getTaskInstancesBaseURL(),
+            url: `${this._getWorkflowRuntimeBaseURL()}/task-instances/${sId}`,
             method: "PATCH",
             contentType: "application/json",
             async: false,
